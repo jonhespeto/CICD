@@ -1,3 +1,3 @@
-module https://github.com/jonhespeto/CICD
+module github.com/jonhespeto/CICD
 
 go 1.16
