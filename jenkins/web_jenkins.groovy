@@ -38,19 +38,19 @@ pipeline {
                 }
             }
         }
-        // stage('Deploy to server') {
-        //     steps {
-        //         sshagent([SSH_KEY_CREDENTIALS_ID]) {
-        //             sh "scp -r * ${SERVER_USER}@${SERVER_HOST}:${DEPLOY_DIRECTORY}"
-        //         }
-        //     }
-        // }
-        // stage('Restart NGINX') {
-        //     steps {
-        //         sshagent([SSH_KEY_CREDENTIALS_ID]) {
-        //             sh "ssh ${SERVER_USER}@${SERVER_HOST} 'sudo nginx -s reload'"
-        //         }
-        //     }
-        // }
+        stage('Deploy to server') {
+            steps {
+                sshagent(['ssh_key_for_nginx']) {
+                    sh "scp -r -p ${SERVER_PORT} * ${SERVER_USER}@${SERVER_HOST}:${DEPLOY_DIRECTORY}"
+                }
+            }
+        }
+        stage('Restart NGINX') {
+            steps {
+                sshagent([ssh_key_for_nginx]) {
+                    sh "ssh -p ${SERVER_PORT} ${SERVER_USER}@${SERVER_HOST} 'sudo nginx -s reload'"
+                }
+            }
+        }
     }
 }
