@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout code') {
             steps {
-                git 'https://github.com/jonhespeto/web.git'
+                git branch: 'main', url: 'https://github.com/jonhespeto/web.git'
             }
         }
         stage('Modify HTML') {
