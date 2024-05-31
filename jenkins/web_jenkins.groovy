@@ -56,9 +56,7 @@ pipeline {
         }
         stage('Replace index.html') {
             when {
-                allOf {
-                    success()
-                }
+                expression { return currentBuild.result == null || currentBuild.result == 'SUCCESS' }
             }
             steps {
                 sshagent(['ssh_key_for_nginx']) {
