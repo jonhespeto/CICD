@@ -41,7 +41,7 @@ pipeline {
         stage('Deploy to server') {
             steps {
                 sshagent(['ssh_key_for_nginx']) {
-                    sh "scp -r -p ${SERVER_PORT} * ${SERVER_USER}@${SERVER_HOST}:${DEPLOY_DIRECTORY}"
+                    sh "scp -r -P ${SERVER_PORT} * ${SERVER_USER}@${SERVER_HOST}:${DEPLOY_DIRECTORY}"
                 }
             }
         }
