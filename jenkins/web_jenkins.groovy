@@ -52,7 +52,7 @@ pipeline {
                     sh "docker build -t ${DOCKER_IMAGE} ."
                     sh "docker run -d --name ${CONTAINER_NAME} -p 8888:80 ${DOCKER_IMAGE}"
                     sh "sleep 5"
-                    sh "curl --fail https://localhost:8888/index.html || exit 1"
+                    sh "curl --fail http://localhost:8888/index.html || exit 1"
                     sh "curl http://localhost:8888 | grep '${web_TITLE}' || exit 1"
                     sh 'curl -s http://localhost:8888 | grep "<img src=" | grep -oP "src="K[^"]+" | xargs -I {} curl --fail -o /dev/null {} || exit 1'
                 }
