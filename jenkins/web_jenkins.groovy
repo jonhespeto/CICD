@@ -38,6 +38,19 @@ pipeline {
                 }
             }
         }
+
+        stage('Build and Run Docker') {
+            steps {
+                script {
+                    sh 'docker build -t web-test-image .'
+                    sh 'docker run -d --name web-test-container -p 8888:80 web-test-image'
+                    sh 'sleep 10'
+                    sh 'curl --fail http://localhost:8888/index.html || exit 1'
+                    sh 'docker stop web-test-container && docker rm web-test-container'
+                }
+            }
+        }
+
         stage('Replace index.html') {
             steps {
                 sshagent(['ssh_key_for_nginx']) {
