@@ -4,6 +4,10 @@ properties([disableConcurrentBuilds()])
 
 pipeline {
     agent any
+    environment {
+        DOCKER_IMAGE = 'web-test-image'
+        CONTAINER_NAME = 'web-test-container'
+    }
     options {
         buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '5'))
         timestamps()
@@ -38,22 +42,24 @@ pipeline {
                 }
             }
         }
-
         stage('Build and Run Docker') {
             steps {
                 script {
-                    sh 'docker build -t web-test-image .'
-                    sh 'docker run -d --name web-test-container -p 8888:80 web-test-image'
+                    sh 'docker build -t ${DOCKER_IMAGE} .'
+                    sh 'docker run -d --name ${CONTAINER_NAME} -p 8888:80 ${DOCKER_IMAGE}'
                     sh 'sleep 5'
                     sh 'curl --fail http://localhost:8888/index.html || exit 1'
                     sh "curl http://localhost:8888 | grep '${web_TITLE}' || exit 1"
                     sh 'curl -s http://localhost:8888 | grep "<img src=" | grep -oP "src="K[^"]+" | xargs -I {} curl --fail -o /dev/null {} || exit 1'
-                    sh 'docker stop web-test-container && docker rm web-test-container && docker rmi web-test-image'
                 }
             }
         }
-
         stage('Replace index.html') {
+            when {
+                allOf {
+                    success()
+                }
+            }
             steps {
                 sshagent(['ssh_key_for_nginx']) {
                     sh "scp -P ${SERVER_PORT} -o StrictHostKeyChecking=no index.html ${SERVER_USER}@${SERVER_HOST}:${SERVER_FROM_DIRECTORY}/"
@@ -62,12 +68,14 @@ pipeline {
                 }
             }
         }
-    // stage('Restart NGINX') {
-    //     steps {
-    //         sshagent(['ssh_key_for_nginx']) {
-    //             sh "ssh -p ${SERVER_PORT} ${SERVER_USER}@${SERVER_HOST} 'sudo nginx -s reload'"
-    //         }
-    //     }
-    // }
+    }
+    post {
+        always {
+            script {
+                sh "docker stop ${CONTAINER_NAME}"
+                sh "docker rm ${CONTAINER_NAME}"
+                sh "docker rmi ${DOCKER_IMAGE}"
+            }
+        }
     }
 }
