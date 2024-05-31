@@ -40,18 +40,19 @@ pipeline {
         }
         stage('Replace index.html') {
             steps {
-                sshagent(['ssh_key_for_nginx']) {
+                sshagent([ssh_key_for_nginx]) {
                     sh "scp -o StrictHostKeyChecking=no -P ${SERVER_PORT} index.html ${SERVER_USER}@${SERVER_HOST}:${SERVER_FROM_DIRECTORY}/"
                     sh "ssh -p ${SERVER_PORT} ${SERVER_USER}@${SERVER_HOST} 'sudo cp ${SERVER_FROM_DIRECTORY}/index.html ${DEPLOY_DIRECTORY}/index.html'"
-                }
-            }
-        }
-        stage('Restart NGINX') {
-            steps {
-                sshagent([ssh_key_for_nginx]) {
                     sh "ssh -p ${SERVER_PORT} ${SERVER_USER}@${SERVER_HOST} 'sudo nginx -s reload'"
                 }
             }
         }
+        // stage('Restart NGINX') {
+        //     steps {
+        //         sshagent(['ssh_key_for_nginx']) {
+        //             sh "ssh -p ${SERVER_PORT} ${SERVER_USER}@${SERVER_HOST} 'sudo nginx -s reload'"
+        //         }
+        //     }
+        // }
     }
 }
