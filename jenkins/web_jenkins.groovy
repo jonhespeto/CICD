@@ -32,6 +32,7 @@ pipeline {
                                              .replaceAll('<!-- CONTENT_5 -->', web_CONTENT_5)
                                              .replaceAll('<!-- CONTENT_6 -->', web_CONTENT_6)
                                              .replaceAll('<!-- CONTENT_7 -->', web_CONTENT_7)
+                                             .replaceAll('<!-- CONTENT_8 -->', web_CONTENT_8)
                     writeFile(file: 'index.html', text: htmlContent)
                 }
             }
