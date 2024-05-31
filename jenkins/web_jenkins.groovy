@@ -41,7 +41,7 @@ pipeline {
         stage('Replace index.html') {
             steps {
                 sshagent(['ssh_key_for_nginx']) {
-                    sh "scp -r -P ${SERVER_PORT} index.html ${SERVER_USER}@${SERVER_HOST}:${SERVER_FROM_DIRECTORY}/"
+                    sh "scp -P ${SERVER_PORT} index.html ${SERVER_USER}@${SERVER_HOST}:${SERVER_FROM_DIRECTORY}/"
                     sh "ssh -p ${SERVER_PORT} ${SERVER_USER}@${SERVER_HOST} 'sudo cp ${SERVER_FROM_DIRECTORY}/index.html ${DEPLOY_DIRECTORY}/index.html'"
                 }
             }
