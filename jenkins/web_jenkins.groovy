@@ -13,12 +13,14 @@ pipeline {
         timestamps()
     }
     stages {
+        // 
         stage('Checkout code') {
             steps {
                 git branch: 'main', url: 'https://github.com/jonhespeto/web.git'
             }
         }
-        stage('Modify HTML') {
+        // 
+        stage('Modify index.html') {
             steps {
                 script {
                     def htmlContent = readFile('index.html')
@@ -34,7 +36,8 @@ pipeline {
                 }
             }
         }
-        stage('Show Modified Page') {
+        // 
+        stage('Show modified page') {
             steps {
                 script {
                     def modifiedHtmlContent = readFile('index.html')
@@ -42,7 +45,8 @@ pipeline {
                 }
             }
         }
-        stage('Build and Run Docker') {
+        // Build docker image and tests 
+        stage('Build and run docker') {
             steps {
                 script {
                     sh 'docker build -t ${DOCKER_IMAGE} .'
@@ -54,6 +58,7 @@ pipeline {
                 }
             }
         }
+        // Replace file index.html on server
         stage('Replace index.html') {
             when {
                 expression { return currentBuild.result == null || currentBuild.result == 'SUCCESS' }
@@ -67,6 +72,7 @@ pipeline {
             }
         }
     }
+    // Removes esting docker container and image
     post {
         always {
             script {
