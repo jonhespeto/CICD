@@ -46,7 +46,7 @@ pipeline {
                     sh 'docker run -d --name web-test-container -p 8888:80 web-test-image'
                     sh 'sleep 5'
                     sh 'curl --fail http://localhost:8888/index.html || exit 1'
-                    sh 'curl http://localhost:8888 | grep "TITLE" || exit 1'
+                    sh "curl http://localhost:8888 | grep '${web_TITLE}' || exit 1"
                     sh 'curl -s http://localhost:8888 | grep "<img src=" | grep -oP "src="K[^"]+" | xargs -I {} curl --fail -o /dev/null {} || exit 1'
                     sh 'docker stop web-test-container && docker rm web-test-container && docker rmi web-test-image'
                 }
