@@ -46,7 +46,7 @@ pipeline {
         }
       }
         }
-        // Build docker image and tests z
+        // Build docker image and tests
         stage('Build and run docker') {
       steps {
         script {
