@@ -66,9 +66,9 @@ pipeline {
       }
       steps {
         sshagent(['ssh_key_for_nginx']) {
-          sh "ssh -p ${SERVER_PORT} ${SERVER_USER}@${SERVER_HOST} 'mkdir ${LOCAL_DIRECTORY}${$BUILD_NUMBER}'"
-          sh "scp -P ${SERVER_PORT} -o StrictHostKeyChecking=no index.html image* small_image* fav.ico ${SERVER_USER}@${SERVER_HOST}:${LOCAL_DIRECTORY}${$BUILD_NUMBER}/"
-          sh "ssh -p ${SERVER_PORT} ${SERVER_USER}@${SERVER_HOST} 'sudo cp ${LOCAL_DIRECTORY}${$BUILD_NUMBER}/* ${DEPLOY_DIRECTORY}/'"
+          sh "ssh -p ${SERVER_PORT} ${SERVER_USER}@${SERVER_HOST} 'mkdir -p ${LOCAL_DIRECTORY}/${$BUILD_NUMBER}'"
+          sh "scp -P ${SERVER_PORT} -o StrictHostKeyChecking=no index.html image* small_image* fav.ico ${SERVER_USER}@${SERVER_HOST}:${LOCAL_DIRECTORY}/${$BUILD_NUMBER}/"
+          sh "ssh -p ${SERVER_PORT} ${SERVER_USER}@${SERVER_HOST} 'sudo cp ${LOCAL_DIRECTORY}/${$BUILD_NUMBER}/* ${DEPLOY_DIRECTORY}/'"
           sh "ssh -p ${SERVER_PORT} ${SERVER_USER}@${SERVER_HOST} 'sudo nginx -s reload'"
         }
       }
